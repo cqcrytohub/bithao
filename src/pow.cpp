@@ -1,30 +1,24 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2016 The Bitcoin Core developers
+// Copyright (c) 2009-2017 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "pow.h"
+#include <pow.h>
 
-#include "arith_uint256.h"
-#include "chain.h"
-#include "primitives/block.h"
-#include "uint256.h"
-#include "util.h"
-#include "validation.h"
+#include <arith_uint256.h>
+#include <chain.h>
+#include <primitives/block.h>
+#include <uint256.h>
+#include <util.h>
 
 unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock, const Consensus::Params& params)
 {
+    assert(pindexLast != nullptr);
     unsigned int nProofOfWorkLimit = UintToArith256(params.powLimit).GetCompact();
-
-    // Genesis block
-    if (pindexLast == NULL||pindexLast->nHeight <= 500) { 
+    if (pindexLast == NULL || pindexLast->nHeight <= 500) {
         return nProofOfWorkLimit;
     }
-     
-    //every time set retarget...
-    //
-    if (pblock->GetBlockTime() > pindexLast->GetBlockTime() + params.nPowTargetSpacing*5){//1min *5 no block, will reset difficulty
-        
+    if (pblock->GetBlockTime() > pindexLast->GetBlockTime() + params.nPowTargetSpacing * 5) { //1min *5 no block, will reset difficulty
         return nProofOfWorkLimit;
     }
     // Only change once per difficulty adjustment interval
@@ -66,48 +60,36 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
     return CalculateNextWorkRequired(pindexLast, pindexFirst->GetBlockTime(), params);
 }
 
-/**
-지정된 시간만큼으로 다음 난이도를 결정한다.
-**/
 unsigned int CalculateNextWorkRequired(const CBlockIndex* pindexLast, int64_t nFirstBlockTime, const Consensus::Params& params)
 {
-    // 난이도조절을 하지 않게 했다면...
-    if (params.fPowNoRetargeting){//fPowNoRetargeting = false
-        LogPrint("mine", "noRetargeting\n");
+    if (params.fPowNoRetargeting)
         return pindexLast->nBits;
-    }
-    
-    // Limit adjustment step , 진짜로 이용된 시간.
-    int64_t nActualTimespan = pindexLast->GetBlockTime() - nFirstBlockTime;//1 day time span 
-    // 86400 / 4 = 6 hour , min 4hour
-    // 이용된 시간이 /4 작으면 /4 로 최소값과 최대값을 1/4 *4 로 제한한다.
-    if (nActualTimespan < params.nPowTargetTimespan/4) //nPowTargetTimespan = 1day 86400
+
+    // Limit adjustment step
+    int64_t nActualTimespan = pindexLast->GetBlockTime() - nFirstBlockTime;
+    if (nActualTimespan < params.nPowTargetTimespan/4)
         nActualTimespan = params.nPowTargetTimespan/4;
-    // max 4day
     if (nActualTimespan > params.nPowTargetTimespan*4)
         nActualTimespan = params.nPowTargetTimespan*4;
+
     // Retarget
     arith_uint256 bnNew;
     arith_uint256 bnOld;
     bnNew.SetCompact(pindexLast->nBits);
-    
     bnOld = bnNew;
-
-    // Quasar: intermediate uint256 can overflow by 1 bit
+    // Bithao: intermediate uint256 can overflow by 1 bit
     const arith_uint256 bnPowLimit = UintToArith256(params.powLimit);
     bool fShift = bnNew.bits() > bnPowLimit.bits() - 1;
-    if (fShift){
+    if (fShift)
         bnNew >>= 1;
-    }
-    bnNew *= nActualTimespan;//실제걸린시간.
-    bnNew /= params.nPowTargetTimespan;//예상한 시간.
-    if (fShift){ 
+    bnNew *= nActualTimespan;
+    bnNew /= params.nPowTargetTimespan;
+    if (fShift)
         bnNew <<= 1;
-    }
 
-    if (bnNew > bnPowLimit){ 
+    if (bnNew > bnPowLimit)
         bnNew = bnPowLimit;
-    }
+
     return bnNew.GetCompact();
 }
 
@@ -120,16 +102,12 @@ bool CheckProofOfWork(uint256 hash, unsigned int nBits, const Consensus::Params&
     bnTarget.SetCompact(nBits, &fNegative, &fOverflow);
 
     // Check range
-    if (fNegative || bnTarget == 0 || fOverflow || bnTarget > UintToArith256(params.powLimit)){
-        // DbgMsg("fail1");
+    if (fNegative || bnTarget == 0 || fOverflow || bnTarget > UintToArith256(params.powLimit))
         return false;
-    }
 
     // Check proof of work matches claimed amount
-    if (UintToArith256(hash) > bnTarget){ 
-       // DbgMsg("fail2 hash:%s, target:%s" ,hash.ToString(), bnTarget.ToString() );
+    if (UintToArith256(hash) > bnTarget)
         return false;
-    }
 
     return true;
 }
