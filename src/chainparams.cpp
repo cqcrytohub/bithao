@@ -126,7 +126,6 @@ public:
 
         genesis = CreateGenesisBlock(GEN_TIME,NOUNCE, 0x1e0fffff, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        printf("%s \n" , genesis.ToString().c_str());
         uint256 hashGenesis = uint256S("0x00000f321ea9e134162526ce8bd8a4de38398503f323117eb2bfa4eecdbe9170");
         uint256 hashMerkelRoot = uint256S("0xef39d25af0ac9fe2b27bb8962e1c43a766a4481c45a23d30d4db92ba864d0528");
         
