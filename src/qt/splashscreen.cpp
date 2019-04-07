@@ -1,23 +1,23 @@
-// Copyright (c) 2011-2017 The Bitcoin Core developers
+// Copyright (c) 2011-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include <config/bitcoin-config.h>
+#include "config/bitcoin-config.h"
 #endif
 
-#include <qt/splashscreen.h>
+#include "splashscreen.h"
 
-#include <qt/networkstyle.h>
+#include "networkstyle.h"
 
-#include <clientversion.h>
-#include <init.h>
-#include <util.h>
-#include <ui_interface.h>
-#include <version.h>
+#include "clientversion.h"
+#include "init.h"
+#include "util.h"
+#include "ui_interface.h"
+#include "version.h"
 
 #ifdef ENABLE_WALLET
-#include <wallet/wallet.h>
+#include "wallet/wallet.h"
 #endif
 
 #include <QApplication>
@@ -31,7 +31,7 @@ SplashScreen::SplashScreen(Qt::WindowFlags f, const NetworkStyle *networkStyle) 
 {
     // set reference point, paddings
     int paddingRight            = 50;
-    int paddingTop              = 50;
+    int paddingTop              = 150;
     int titleVersionVSpace      = 17;
     int titleCopyrightVSpace    = 40;
 
@@ -44,7 +44,7 @@ SplashScreen::SplashScreen(Qt::WindowFlags f, const NetworkStyle *networkStyle) 
     // define text to place
     QString titleText       = tr(PACKAGE_NAME);
     QString versionText     = QString("Version %1").arg(QString::fromStdString(FormatFullVersion()));
-    QString copyrightText   = QString::fromUtf8(CopyrightHolders(strprintf("\xc2\xA9 %u-%u ", 2011, COPYRIGHT_YEAR)).c_str());
+    QString copyrightText   = QString::fromUtf8(CopyrightHolders(strprintf("\xc2\xA9 %u-%u ", 2017, COPYRIGHT_YEAR)).c_str());
     QString titleAddText    = networkStyle->getTitleAddText();
 
     QString font            = QApplication::font().toString();
@@ -69,11 +69,16 @@ SplashScreen::SplashScreen(Qt::WindowFlags f, const NetworkStyle *networkStyle) 
     pixPaint.fillRect(rGradient, gradient);
 
     // draw the bitcoin icon, expected size of PNG: 1024x1024
-    QRect rectIcon(QPoint(20,30), QSize(220,220));
+    QRect rectIcon(QPoint(75,15), QSize(320,80));
 
-    const QSize requiredSize(1024,1024);
-    QPixmap icon(networkStyle->getAppIcon().pixmap(requiredSize));
-
+    const QSize requiredSize(320,80);
+    // QPixmap icon(networkStyle->getAppIcon().pixmap(requiredSize));
+    QPixmap pixmap2;
+    QIcon appIcon;
+    pixmap2.load(":/icons/app_splash");
+    appIcon = QIcon(pixmap2);
+    
+    QPixmap icon(appIcon.pixmap(requiredSize));
     pixPaint.drawPixmap(rectIcon, icon);
 
     // check font size and drawing with
@@ -98,6 +103,8 @@ SplashScreen::SplashScreen(Qt::WindowFlags f, const NetworkStyle *networkStyle) 
         pixPaint.setFont(QFont(font, 10*fontFactor));
         titleVersionVSpace -= 5;
     }
+    paddingTop+=5;
+    
     pixPaint.drawText(pixmap.width()/devicePixelRatio-titleTextWidth-paddingRight+2,paddingTop+titleVersionVSpace,versionText);
 
     // draw copyright stuff
@@ -131,22 +138,11 @@ SplashScreen::SplashScreen(Qt::WindowFlags f, const NetworkStyle *networkStyle) 
     move(QApplication::desktop()->screenGeometry().center() - r.center());
 
     subscribeToCoreSignals();
-    installEventFilter(this);
 }
 
 SplashScreen::~SplashScreen()
 {
     unsubscribeFromCoreSignals();
-}
-
-bool SplashScreen::eventFilter(QObject * obj, QEvent * ev) {
-    if (ev->type() == QEvent::KeyPress) {
-        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(ev);
-        if(keyEvent->text()[0] == 'q') {
-            StartShutdown();
-        }
-    }
-    return QObject::eventFilter(obj, ev);
 }
 
 void SplashScreen::slotFinish(QWidget *mainWin)
@@ -170,18 +166,15 @@ static void InitMessage(SplashScreen *splash, const std::string &message)
         Q_ARG(QColor, QColor(55,55,55)));
 }
 
-static void ShowProgress(SplashScreen *splash, const std::string &title, int nProgress, bool resume_possible)
+static void ShowProgress(SplashScreen *splash, const std::string &title, int nProgress)
 {
-    InitMessage(splash, title + std::string("\n") +
-            (resume_possible ? _("(press q to shutdown and continue later)")
-                                : _("press q to shutdown")) +
-            strprintf("\n%d", nProgress) + "%");
+    InitMessage(splash, title + strprintf("%d", nProgress) + "%");
 }
 
 #ifdef ENABLE_WALLET
 void SplashScreen::ConnectWallet(CWallet* wallet)
 {
-    wallet->ShowProgress.connect(boost::bind(ShowProgress, this, _1, _2, false));
+    wallet->ShowProgress.connect(boost::bind(ShowProgress, this, _1, _2));
     connectedWallets.push_back(wallet);
 }
 #endif
@@ -190,7 +183,7 @@ void SplashScreen::subscribeToCoreSignals()
 {
     // Connect signals to client
     uiInterface.InitMessage.connect(boost::bind(InitMessage, this, _1));
-    uiInterface.ShowProgress.connect(boost::bind(ShowProgress, this, _1, _2, _3));
+    uiInterface.ShowProgress.connect(boost::bind(ShowProgress, this, _1, _2));
 #ifdef ENABLE_WALLET
     uiInterface.LoadWallet.connect(boost::bind(&SplashScreen::ConnectWallet, this, _1));
 #endif
@@ -200,10 +193,10 @@ void SplashScreen::unsubscribeFromCoreSignals()
 {
     // Disconnect signals from client
     uiInterface.InitMessage.disconnect(boost::bind(InitMessage, this, _1));
-    uiInterface.ShowProgress.disconnect(boost::bind(ShowProgress, this, _1, _2, _3));
+    uiInterface.ShowProgress.disconnect(boost::bind(ShowProgress, this, _1, _2));
 #ifdef ENABLE_WALLET
-    for (CWallet* const & pwallet : connectedWallets) {
-        pwallet->ShowProgress.disconnect(boost::bind(ShowProgress, this, _1, _2, false));
+    Q_FOREACH(CWallet* const & pwallet, connectedWallets) {
+        pwallet->ShowProgress.disconnect(boost::bind(ShowProgress, this, _1, _2));
     }
 #endif
 }

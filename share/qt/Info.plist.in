@@ -38,7 +38,7 @@
   <true/>
 
   <key>CFBundleIdentifier</key>
-  <string>org.bithao.Bithao-Qt</string>
+  <string>com.bithao.Bithao-Qt</string>
 
   <key>CFBundleURLTypes</key>
   <array>
@@ -46,7 +46,7 @@
       <key>CFBundleTypeRole</key>
       <string>Editor</string>
       <key>CFBundleURLName</key>
-      <string>org.bithao.BithaoPayment</string>
+      <string>com.bithao.BithaoPayment</string>
       <key>CFBundleURLSchemes</key>
       <array>
         <string>bithao</string>
@@ -58,7 +58,7 @@
   <array>
     <dict>
       <key>UTTypeIdentifier</key>
-      <string>org.bithao.paymentrequest</string>
+      <string>com.bithao.paymentrequest</string>
       <key>UTTypeDescription</key>
       <string>Bithao payment request</string>
       <key>UTTypeConformsTo</key>
@@ -84,7 +84,7 @@
       <string>Editor</string>
       <key>LSItemContentTypes</key>
       <array>
-        <string>org.bithao.paymentrequest</string>
+        <string>com.bithao.paymentrequest</string>
       </array>
       <key>LSHandlerRank</key>
       <string>Owner</string>

@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017 The Bitcoin Core developers
+// Copyright (c) 2012-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -8,6 +8,8 @@
 /**
  * network protocol versioning
  */
+//for pos time stamp tx
+
 
 static const int PROTOCOL_VERSION = 70015;
 
@@ -26,6 +28,9 @@ static const int CADDR_TIME_VERSION = 31402;
 
 //! BIP 0031, pong message, is enabled for all versions AFTER this one
 static const int BIP0031_VERSION = 60000;
+
+//! "mempool" command, enhanced "getdata" behavior starts with this version
+static const int MEMPOOL_GD_VERSION = 60002;
 
 //! "filter*" commands are disabled without NODE_BLOOM after and including this version
 static const int NO_BLOOM_VERSION = 70011;

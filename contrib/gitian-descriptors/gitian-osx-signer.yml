@@ -7,7 +7,7 @@ architectures:
 packages:
 - "faketime"
 remotes:
-- "url": "https://github.com/cqcrytohub/bithao-detached-sigs.git"
+- "url": "https://github.com/bithao-project/bithao-detached-sigs.git"
   "dir": "signature"
 files:
 - "bithao-osx-unsigned.tar.gz"

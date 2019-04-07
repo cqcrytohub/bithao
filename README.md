@@ -1,7 +1,7 @@
 Bithao Core integration/staging tree
 =====================================
 
-[![Build Status](https://travis-ci.org/cqcrytohub/bithao.svg?branch=master)](https://travis-ci.org/cqcrytohub/bithao)
+[![Build Status](https://travis-ci.org/bithao-project/bithao.svg?branch=master)](https://travis-ci.org/bithao-project/bithao)
 
 https://bithao.org
 
@@ -27,7 +27,7 @@ Development Process
 -------------------
 
 The `master` branch is regularly built and tested, but is not guaranteed to be
-completely stable. [Tags](https://github.com/cqcrytohub/bithao/tags) are created
+completely stable. [Tags](https://github.com/bithao-project/bithao/tags) are created
 regularly to indicate new official, stable release versions of Bithao Core.
 
 The contribution workflow is described in [CONTRIBUTING.md](CONTRIBUTING.md).
@@ -53,9 +53,9 @@ submit new unit tests for old code. Unit tests can be compiled and run
 (assuming they weren't disabled in configure) with: `make check`. Further details on running
 and extending unit tests can be found in [/src/test/README.md](/src/test/README.md).
 
-There are also [regression and integration tests](/test), written
+There are also [regression and integration tests](/qa) of the RPC interface, written
 in Python, that are run automatically on the build server.
-These tests can be run (if the [test dependencies](/test) are installed) with: `test/functional/test_runner.py`
+These tests can be run (if the [test dependencies](/qa) are installed) with: `qa/pull-tester/rpc-tests.py`
 
 The Travis CI system makes sure that every pull request is built for Windows, Linux, and OS X, and that unit/sanity tests are run automatically.
 

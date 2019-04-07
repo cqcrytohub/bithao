@@ -6,6 +6,7 @@
 sign=false
 verify=false
 build=false
+setupenv=false
 
 # Systems to build
 linux=true
@@ -16,7 +17,7 @@ osx=true
 SIGNER=
 VERSION=
 commit=false
-url=https://github.com/cqcrytohub/bithao
+url=https://github.com/bithao-project/bithao
 proc=2
 mem=2000
 lxc=true
@@ -30,7 +31,7 @@ commitFiles=true
 read -d '' usage <<- EOF
 Usage: $scriptName [-c|u|v|b|s|B|o|h|j|m|] signer version
 
-Run this script from the directory containing the bithao, gitian-builder, gitian.sigs.bha, and bithao-detached-sigs.
+Run this script from the directory containing the bithao, gitian-builder, gitian.sigs.ltc, and bithao-detached-sigs.
 
 Arguments:
 signer          GPG signer to sign each build assert file
@@ -38,7 +39,7 @@ version		Version number, commit, or branch to build. If building a commit or bra
 
 Options:
 -c|--commit	Indicate that the version argument is for a commit or branch
--u|--url	Specify the URL of the repository. Default is https://github.com/cqcrytohub/bithao
+-u|--url	Specify the URL of the repository. Default is https://github.com/bithao-project/bithao
 -v|--verify 	Verify the gitian build
 -b|--build	Do a gitian build
 -s|--sign	Make signed binaries for Windows and Mac OSX
@@ -47,7 +48,7 @@ Options:
 -j		Number of processes to use. Default 2
 -m		Memory to allocate in MiB. Default 2000
 --kvm           Use KVM instead of LXC
---setup         Set up the Gitian building environment. Uses KVM. If you want to use lxc, use the --lxc option. Only works on Debian-based systems (Ubuntu, Debian)
+--setup         Setup the gitian building environment. Uses KVM. If you want to use lxc, use the --lxc option. Only works on Debian-based systems (Ubuntu, Debian)
 --detach-sign   Create the assert file for detached signing. Will not commit anything.
 --no-commit     Do not commit anything to git
 -h|--help	Print this help message
@@ -105,7 +106,7 @@ while :; do
 		fi
 		shift
 	    else
-		echo 'Error: "--os" requires an argument containing an l (for linux), w (for windows), or x (for Mac OSX)'
+		echo 'Error: "--os" requires an argument containing an l (for linux), w (for windows), or x (for Mac OSX)\n'
 		exit 1
 	    fi
 	    ;;
@@ -178,6 +179,8 @@ done
 if [[ $lxc = true ]]
 then
     export USE_LXC=1
+    export LXC_BRIDGE=lxcbr0
+    sudo ifconfig lxcbr0 up 10.0.2.2
 fi
 
 # Check for OSX SDK
@@ -188,7 +191,7 @@ then
 fi
 
 # Get signer
-if [[ -n "$1" ]]
+if [[ -n"$1" ]]
 then
     SIGNER=$1
     shift
@@ -229,8 +232,8 @@ echo ${COMMIT}
 if [[ $setup = true ]]
 then
     sudo apt-get install ruby apache2 git apt-cacher-ng python-vm-builder qemu-kvm qemu-utils
-    git clone https://github.com/bithao-project/gitian.sigs.bha.git
-    git clone https://github.com/cqcrytohub/bithao-detached-sigs.git
+    git clone https://github.com/bithao-project/gitian.sigs.ltc.git
+    git clone https://github.com/bithao-project/bithao-detached-sigs.git
     git clone https://github.com/devrandom/gitian-builder.git
     pushd ./gitian-builder
     if [[ -n "$USE_LXC" ]]
@@ -272,7 +275,7 @@ then
 	    echo "Compiling ${VERSION} Linux"
 	    echo ""
 	    ./bin/gbuild -j ${proc} -m ${mem} --commit bithao=${COMMIT} --url bithao=${url} ../bithao/contrib/gitian-descriptors/gitian-linux.yml
-	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-linux --destination ../gitian.sigs.bha/ ../bithao/contrib/gitian-descriptors/gitian-linux.yml
+	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-linux --destination ../gitian.sigs.ltc/ ../bithao/contrib/gitian-descriptors/gitian-linux.yml
 	    mv build/out/bithao-*.tar.gz build/out/src/bithao-*.tar.gz ../bithao-binaries/${VERSION}
 	fi
 	# Windows
@@ -282,7 +285,7 @@ then
 	    echo "Compiling ${VERSION} Windows"
 	    echo ""
 	    ./bin/gbuild -j ${proc} -m ${mem} --commit bithao=${COMMIT} --url bithao=${url} ../bithao/contrib/gitian-descriptors/gitian-win.yml
-	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-win-unsigned --destination ../gitian.sigs.bha/ ../bithao/contrib/gitian-descriptors/gitian-win.yml
+	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-win-unsigned --destination ../gitian.sigs.ltc/ ../bithao/contrib/gitian-descriptors/gitian-win.yml
 	    mv build/out/bithao-*-win-unsigned.tar.gz inputs/bithao-win-unsigned.tar.gz
 	    mv build/out/bithao-*.zip build/out/bithao-*.exe ../bithao-binaries/${VERSION}
 	fi
@@ -293,7 +296,7 @@ then
 	    echo "Compiling ${VERSION} Mac OSX"
 	    echo ""
 	    ./bin/gbuild -j ${proc} -m ${mem} --commit bithao=${COMMIT} --url bithao=${url} ../bithao/contrib/gitian-descriptors/gitian-osx.yml
-	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-osx-unsigned --destination ../gitian.sigs.bha/ ../bithao/contrib/gitian-descriptors/gitian-osx.yml
+	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-osx-unsigned --destination ../gitian.sigs.ltc/ ../bithao/contrib/gitian-descriptors/gitian-osx.yml
 	    mv build/out/bithao-*-osx-unsigned.tar.gz inputs/bithao-osx-unsigned.tar.gz
 	    mv build/out/bithao-*.tar.gz build/out/bithao-*.dmg ../bithao-binaries/${VERSION}
 	fi
@@ -322,27 +325,27 @@ then
 	echo ""
 	echo "Verifying v${VERSION} Linux"
 	echo ""
-	./bin/gverify -v -d ../gitian.sigs.bha/ -r ${VERSION}-linux ../bithao/contrib/gitian-descriptors/gitian-linux.yml
+	./bin/gverify -v -d ../gitian.sigs.ltc/ -r ${VERSION}-linux ../bithao/contrib/gitian-descriptors/gitian-linux.yml
 	# Windows
 	echo ""
 	echo "Verifying v${VERSION} Windows"
 	echo ""
-	./bin/gverify -v -d ../gitian.sigs.bha/ -r ${VERSION}-win-unsigned ../bithao/contrib/gitian-descriptors/gitian-win.yml
+	./bin/gverify -v -d ../gitian.sigs.ltc/ -r ${VERSION}-win-unsigned ../bithao/contrib/gitian-descriptors/gitian-win.yml
 	# Mac OSX	
 	echo ""
 	echo "Verifying v${VERSION} Mac OSX"
 	echo ""	
-	./bin/gverify -v -d ../gitian.sigs.bha/ -r ${VERSION}-osx-unsigned ../bithao/contrib/gitian-descriptors/gitian-osx.yml
+	./bin/gverify -v -d ../gitian.sigs.ltc/ -r ${VERSION}-osx-unsigned ../bithao/contrib/gitian-descriptors/gitian-osx.yml
 	# Signed Windows
 	echo ""
 	echo "Verifying v${VERSION} Signed Windows"
 	echo ""
-	./bin/gverify -v -d ../gitian.sigs.bha/ -r ${VERSION}-osx-signed ../bithao/contrib/gitian-descriptors/gitian-osx-signer.yml
+	./bin/gverify -v -d ../gitian.sigs.ltc/ -r ${VERSION}-osx-signed ../bithao/contrib/gitian-descriptors/gitian-osx-signer.yml
 	# Signed Mac OSX
 	echo ""
 	echo "Verifying v${VERSION} Signed Mac OSX"
 	echo ""
-	./bin/gverify -v -d ../gitian.sigs.bha/ -r ${VERSION}-osx-signed ../bithao/contrib/gitian-descriptors/gitian-osx-signer.yml	
+	./bin/gverify -v -d ../gitian.sigs.ltc/ -r ${VERSION}-osx-signed ../bithao/contrib/gitian-descriptors/gitian-osx-signer.yml	
 	popd
 fi
 
@@ -358,7 +361,7 @@ then
 	    echo "Signing ${VERSION} Windows"
 	    echo ""
 	    ./bin/gbuild -i --commit signature=${COMMIT} ../bithao/contrib/gitian-descriptors/gitian-win-signer.yml
-	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-win-signed --destination ../gitian.sigs.bha/ ../bithao/contrib/gitian-descriptors/gitian-win-signer.yml
+	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-win-signed --destination ../gitian.sigs.ltc/ ../bithao/contrib/gitian-descriptors/gitian-win-signer.yml
 	    mv build/out/bithao-*win64-setup.exe ../bithao-binaries/${VERSION}
 	    mv build/out/bithao-*win32-setup.exe ../bithao-binaries/${VERSION}
 	fi
@@ -369,7 +372,7 @@ then
 	    echo "Signing ${VERSION} Mac OSX"
 	    echo ""
 	    ./bin/gbuild -i --commit signature=${COMMIT} ../bithao/contrib/gitian-descriptors/gitian-osx-signer.yml
-	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-osx-signed --destination ../gitian.sigs.bha/ ../bithao/contrib/gitian-descriptors/gitian-osx-signer.yml
+	    ./bin/gsign -p $signProg --signer $SIGNER --release ${VERSION}-osx-signed --destination ../gitian.sigs.ltc/ ../bithao/contrib/gitian-descriptors/gitian-osx-signer.yml
 	    mv build/out/bithao-osx-signed.dmg ../bithao-binaries/${VERSION}/bithao-${VERSION}-osx.dmg
 	fi
 	popd

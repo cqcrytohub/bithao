@@ -1,9 +1,9 @@
-Bithao Core
-=============
+Bithao Core 0.14.2
+=====================
 
 Setup
 ---------------------
-Bithao Core is the original Bithao client and it builds the backbone of the network. It downloads and, by default, stores the entire history of Bithao transactions (which is currently more than 7 GBs); depending on the speed of your computer and network connection, the synchronization process can take anywhere from a few hours to a day or more.
+Bithao Core is the original Bithao client and it builds the backbone of the network. However, it downloads and stores the entire history of Bithao transactions (which is currently several GBs); depending on the speed of your computer and network connection, the synchronization process can take anywhere from a few hours to a day or more.
 
 To download Bithao Core, visit [bithao.org](https://bithao.org).
 
@@ -37,7 +37,6 @@ Building
 ---------------------
 The following are developer notes on how to build Bithao on your native platform. They are not complete guides, but include notes on the necessary libraries, compile flags, etc.
 
-- [Dependencies](dependencies.md)
 - [OS X Build Notes](build-osx.md)
 - [Unix Build Notes](build-unix.md)
 - [Windows Build Notes](build-windows.md)
@@ -51,6 +50,7 @@ The Bithao repo's [root README](/README.md) contains relevant information on the
 - [Developer Notes](developer-notes.md)
 - [Release Notes](release-notes.md)
 - [Release Process](release-process.md)
+- [Source Code Documentation (External Link)](https://dev.visucore.com/bithao/doxygen/)
 - [Translation Process](translation_process.md)
 - [Translation Strings Policy](translation_strings_policy.md)
 - [Travis CI](travis-ci.md)

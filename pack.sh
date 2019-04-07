@@ -16,7 +16,7 @@ else
     echo "Bitcoin binary distribution not available for platform and architecture"
     exit -1
 fi
-bitcoin_dir=${coin}-${version}
+bitcoin_dir=bithao-${version}
 rm -Rf tmp/*
 rm -Rf ${tarball_name}
 
@@ -25,6 +25,8 @@ mkdir -p tmp/${bitcoin_dir}/bin
 cp src/${coin}-cli          tmp/${bitcoin_dir}/bin/${coin}-cli
 cp src/${coin}-tx           tmp/${bitcoin_dir}/bin/${coin}-tx
 cp src/${coin}d             tmp/${bitcoin_dir}/bin/${coin}d
+cp src/test/test_bitcoin    tmp/${bitcoin_dir}/bin/test_${coin}
+cp src/wallet-utility       tmp/${bitcoin_dir}/bin/
 cp src/qt/${coin}-qt        tmp/${bitcoin_dir}/bin/${coin}-qt
 cp ${coin}.conf             tmp/${bitcoin_dir}/bin/${coin}.conf
 cd tmp
