@@ -113,7 +113,7 @@ public:
         consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000000000000000200002");
 
         // By default assume that the signatures in ancestors of this block are valid.
-        consensus.defaultAssumeValid = uint256S("0x00");
+        consensus.defaultAssumeValid = uint256S("0x00000fe12cdacc62c51ddbf5ee6187d15451aa68436168eb550b39c7d4b5a734");
         /**
          * The message start string is designed to be unlikely to occur in normal data.
          * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
@@ -137,7 +137,7 @@ public:
 
         // Note that of those with the service bits flag, most only support a subset of possible options
         vSeeds.emplace_back("seed-bha.bitchk.com");
-        // vSeeds.emplace_back("dnsseed.bithao.org"); 
+        vSeeds.emplace_back("seed.bithao.org"); 
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,25);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,40);
@@ -156,8 +156,8 @@ public:
 
         checkpointData = {
             {
-                
-                
+               ( 0, uint256S("0x00000f321ea9e134162526ce8bd8a4de38398503f323117eb2bfa4eecdbe9170")),
+               (100 ,uint256S("0x00000fe12cdacc62c51ddbf5ee6187d15451aa68436168eb550b39c7d4b5a734"))
             }
         };
 
