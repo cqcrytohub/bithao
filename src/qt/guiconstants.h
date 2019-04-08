@@ -48,7 +48,7 @@ static const int MAX_URI_LENGTH = 255;
 /* Number of frames in spinner animation */
 #define SPINNER_FRAMES 36
 
-#define QAPP_ORG_NAME "Bithao"
+#define QAPP_ORG_NAME "BithaoQT"
 #define QAPP_ORG_DOMAIN "bithaonu.com"
 #define QAPP_APP_NAME_DEFAULT "Bithao-Qt"
 #define QAPP_APP_NAME_TESTNET "Bithao-Qt-testnet"

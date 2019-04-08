@@ -488,7 +488,7 @@ boost::filesystem::path GetDefaultDataDir()
     // Unix: ~/.bitcoin
 #ifdef WIN32
     // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "Bithao";
+    return GetSpecialFolderPath(CSIDL_APPDATA) / "BithaoQT";
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
@@ -498,7 +498,7 @@ boost::filesystem::path GetDefaultDataDir()
         pathRet = fs::path(pszHome);
 #ifdef MAC_OSX
     // Mac
-    return pathRet / "Library/Application Support/Bithao";
+    return pathRet / "Library/Application Support/Bithao_";
 #else
     // Unix
     return pathRet / ".bithao";
