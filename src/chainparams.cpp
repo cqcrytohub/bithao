@@ -111,7 +111,7 @@ public:
 
         // By default assume that the signatures in ancestors of this block are valid.
         // consensus.defaultAssumeValid = uint256S("0x66f49ad85624c33e4fd61aa45c54012509ed4a53308908dd07f56346c7939273"); //1441280
-        consensus.defaultAssumeValid = uint256S("0x00");
+        consensus.defaultAssumeValid = uint256S("0x00000a457aa1f344551fc042491c96afc45f87461fcf3467ad092564dcdc4bbf");
         /**
          * The message start string is designed to be unlikely to occur in normal data.
          * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
@@ -156,7 +156,7 @@ public:
         checkpointData = {
             {
                { 0, uint256S("0x00000f321ea9e134162526ce8bd8a4de38398503f323117eb2bfa4eecdbe9170")},
-            //    {100 ,uint256S("0x00000fe12cdacc62c51ddbf5ee6187d15451aa68436168eb550b39c7d4b5a734")}
+                {500 ,uint256S("0x0000078b8f07b3a052632c9569459814aad9b243110facb5fe87cf3419ffbe71")}
             }
         };
 
