@@ -498,7 +498,7 @@ boost::filesystem::path GetDefaultDataDir()
         pathRet = fs::path(pszHome);
 #ifdef MAC_OSX
     // Mac
-    return pathRet / "Library/Application Support/Bithao_";
+    return pathRet / "Library/Application Support/BithaoQT";
 #else
     // Unix
     return pathRet / ".bithao";
