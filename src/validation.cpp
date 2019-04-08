@@ -1237,7 +1237,7 @@ CAmount GetBlockSubsidy(const CBlockIndex * pindexPrev , const Consensus::Params
     }  
     //limit of reward
     if (pindexPrev != NULL && (pindexPrev->nMoneySupply + nSubsidy) > MAX_MONEY) {
-		LogPrintf("Max Money.... no more reward[pow] %s \n" , pindexPrev->nMoneySupply);
+		// LogPrintf("Max Money.... no more reward[pow] %s \n" , pindexPrev->nMoneySupply);
 		nSubsidy = 0;
 	}
     
