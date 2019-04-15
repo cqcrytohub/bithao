@@ -46,7 +46,8 @@ static const unsigned int DEFAULT_KEYPOOL_SIZE = 100;
 //! -paytxfee default
 static const CAmount DEFAULT_TRANSACTION_FEE = 0;
 //! -fallbackfee default
-static const CAmount DEFAULT_FALLBACK_FEE = 1000000;//perKb Fee
+// change default fee /10
+static const CAmount DEFAULT_FALLBACK_FEE = 100000;//perKb Fee
 //! -mintxfee default
 static const CAmount DEFAULT_TRANSACTION_MINFEE = 10000;//수수료 Fee
 //! minimum recommended increment for BIP 125 replacement txs
