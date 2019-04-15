@@ -135,7 +135,9 @@ public:
         vSeeds.clear();
         // Note that of those with the service bits flag, most only support a subset of possible options
         
-        vSeeds.push_back(CDNSSeedData("seed0", "seed-bha.bitchk.com",true));
+        vSeeds.push_back(CDNSSeedData("seed0", "seed-bha.bitchk.com",false));
+        vSeeds.push_back(CDNSSeedData("seed1", "dnsseed.cqcryptohub.com",false));
+        vSeeds.push_back(CDNSSeedData("seed2", "dnsseed.bithao.com",false));
         // vSeeds.emplace_back("dnsseed.bithao.org"); 
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,25);
